@@ -1,0 +1,8 @@
+*.vcxproj
+*.filters
+*.user
+.vs
+/bin/intermediates
+*.ilk
+*.pdb
+*.sln

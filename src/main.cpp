@@ -1,15 +1,17 @@
 #include <iostream>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "headerLibs\stb_image_write.h"
+#include "Vector3.h"
+#include "Color.h"
+
 
 int main()
 {
-	const unsigned int image_height = 256;
-	const unsigned int image_width = 256;
-	const unsigned int image_channels = 3;
+	unsigned int const image_height{ 256 };
+	unsigned int const image_width{ 256 };
+	unsigned int const image_channels {3};
 	unsigned char* const image = new unsigned char[image_height * image_width * image_channels];
-
-
+	
 	unsigned char* img = image;
 	for (int j = 0; j < image_height; j++)
 	{
@@ -17,24 +19,23 @@ int main()
 		{
 			if (j < image_height / 2 && i < image_width / 2)
 			{
-				*img = 0; *(img + 1) = 0; *(img + 2) = 0;
-				img += image_channels;
+				write_rgb_color(img, Color(0, 0, 0));
 			}
 
-			else if (j >= image_height / 2 && i < image_width / 2)
-			{
-				*img = 0; *(img + 1) = 0; *(img + 2) = 255;
-				img += image_channels;
-			}
 			else if (j < image_height / 2 && i >= image_width / 2)
 			{
-				*img = 0; *(img + 1) = 255; *(img + 2) = 0;
-				img += image_channels;
+				write_rgb_color(img, Color(255, 0, 0));
+
+			}
+			else if (j >= image_height / 2 && i < image_width / 2)
+			{
+				write_rgb_color(img, Color(0, 255, 0));
+
 			}
 			else
 			{
-				*img = 255; *(img + 1) = 0; *(img + 2) = 255;
-				img += image_channels;
+				write_rgb_color(img, Color(0, 0, 255));
+
 			}
 		}
 		std::cout << "\rScanlines remaining: " << (image_height - j - 1) << ' ' << std::flush;
@@ -43,4 +44,5 @@ int main()
 	stbi_write_png("output.png", image_width, image_height, image_channels, image, 0);
 	delete[] image;
 	std::cin.get();
+	return 0;
 }
