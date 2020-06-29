@@ -11,6 +11,7 @@ void write_rgb_color(unsigned char*& img, Color pixel_color, unsigned int sample
 {
 	double scale = 1.0 / samples_per_pixel;
 	pixel_color *= scale;
+	pixel_color = sqrt(pixel_color); // GAMMA CORRECTION https://graphics.stanford.edu/gamma.html
 	pixel_color = clamp(pixel_color, 0, 0.999);
 	pixel_color *= 256;
 

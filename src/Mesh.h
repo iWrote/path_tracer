@@ -2,13 +2,15 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include "path_tracer_utils.h"
 
-#include "Ray.h"
+class Material;
 
 struct RayHit
 {
 	Point3 p;
 	Vector3 normal;
+	std::shared_ptr<Material> mat_ptr;
 	double t;
 	bool front_face;
 

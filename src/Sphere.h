@@ -2,9 +2,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-
-#include "Mesh.h"
-#include "Vector3.h"
+#include "path_tracer_utils.h"
 
 class Sphere : public Mesh
 {
@@ -12,8 +10,8 @@ public:
 	Sphere()
 	{}
 
-	Sphere(Point3 cen, double r)
-		:center(cen), radius(r)
+	Sphere(Point3 cen, double r, std::shared_ptr<Material> m)
+		:center(cen), radius(r), mat_ptr(m)
 	{}
 
 	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const;
@@ -21,6 +19,7 @@ public:
 public:
 	Point3 center;
 	double radius;
+	std::shared_ptr<Material> mat_ptr;
 };
 
 bool Sphere::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
@@ -40,6 +39,7 @@ bool Sphere::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
 			hitrec.t = tmp;
 			hitrec.p = r.at(tmp);
 			hitrec.set_face_normal(r, (hitrec.p - center) / radius); //passing in "outward normal"
+			hitrec.mat_ptr = mat_ptr;
 			return true;
 		}
 
@@ -49,6 +49,7 @@ bool Sphere::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
 			hitrec.t = tmp;
 			hitrec.p = r.at(tmp);
 			hitrec.set_face_normal(r, (hitrec.p - center) / radius); //passing in "outward normal"
+			hitrec.mat_ptr = mat_ptr;
 			return true;
 		}
 	}//if hit

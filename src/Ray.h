@@ -10,8 +10,8 @@ class Ray
 public:
 	Ray(){}
 
-	Ray(const Point3& r, const Vector3& t)
-		: o{r}, d{t}
+	Ray(const Point3& r0, const Vector3& t)
+		: o{r0}, d{t}
 	{}
 
 	Point3 origin() const { return o; }
