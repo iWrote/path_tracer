@@ -193,6 +193,14 @@ Vector3 reflect(const Vector3& v, const Vector3& n)
 	return v - 2 * dot(v, n) * n;
 }
 
+Vector3 refract(const Vector3& unit_v, const Vector3& n, double etai_over_etat)
+{
+	double cos_theta = dot(-unit_v, n);
+	Vector3 r_out_parallel = etai_over_etat * (unit_v + cos_theta * n);
+	Vector3 r_out_perp = -std::sqrt(1.0 - r_out_parallel.length_squared()) * n;
+	return r_out_parallel + r_out_perp;
+}
+
 using Point3 = Vector3;
 using Color = Vector3;
 

@@ -60,16 +60,17 @@ int main()
 	unsigned char* const image = new unsigned char[image_height * image_width * image_channels];
 	
 	unsigned int const samples_per_pixel = 10;
-	unsigned int const max_depth = 20;
+	unsigned int const max_depth = 15;
 	
 	Camera cam;
 
 	MeshList world;
 
-	world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5, std::make_shared<Lambertian>(Color(0.7, 0.3, 0.3))));
-	world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100, std::make_shared<Lambertian>(Color(0.8, 0.8, 0))));
+	world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5, std::make_shared<Lambertian>(Color(.1, .2, .5))));
+	world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100, std::make_shared<Lambertian>(Color(.8, .8, 0.))));
 	world.add(std::make_shared<Sphere>(Point3(1, 0, -1), 0.5, std::make_shared<Metal>(Color(.8, .6, .2), 0.3)));
-	world.add(std::make_shared<Sphere>(Point3(-1, 0, -1), 0.5,std::make_shared<Metal>(Color(.8, .8, .8), 1.0)));
+	world.add(std::make_shared<Sphere>(Point3(-1, 0, -1), 0.5, std::make_shared<Dielectric>(1.5)));
+	world.add(std::make_shared<Sphere>(Point3(-1, 0, -1), -0.45, std::make_shared<Dielectric>(1.5)));
 
 	unsigned char* img = image;
 	for (int j = image_height-1; j >= 0; j--)
