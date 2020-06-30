@@ -28,8 +28,58 @@
 	return (1.0f - t) * Color(1, 1, 1) + t * Color(0.5f,0.7f,1);
 }*/
 
+MeshList random_scene() {
+	MeshList world;
+
+	auto ground_material = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
+	world.add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, ground_material));
+
+	for (int a = -11; a < 11; a++) {
+		for (int b = -11; b < 11; b++) {
+			auto choose_mat = random_double();
+			Point3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
+
+			if ((center - Point3(4, 0.2, 0)).length() > 0.9) {
+				std::shared_ptr<Material> sphere_material;
+
+				if (choose_mat < 0.8) {
+					// diffuse
+					auto albedo = Color::random() * Color::random();
+					sphere_material = std::make_shared<Lambertian>(albedo);
+					world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+				}
+				else if (choose_mat < 0.95) {
+					// Metal
+					auto albedo = Color::random(0.5, 1);
+					auto fuzz = random_double(0, 0.5);
+					sphere_material = std::make_shared<Metal>(albedo, fuzz);
+					world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+				}
+				else {
+					// glass
+					sphere_material = std::make_shared<Dielectric>(1.5);
+					world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+				}
+			}
+		}
+	}
+
+	auto material1 = std::make_shared<Dielectric>(1.5);
+	world.add(std::make_shared<Sphere>(Point3(0, 1, 0), 1.0, material1));
+
+	auto material2 = std::make_shared<Lambertian>(Color(0.4, 0.2, 0.1));
+	world.add(std::make_shared<Sphere>(Point3(-4, 1, 0), 1.0, material2));
+
+	auto material3 = std::make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0);
+	world.add(std::make_shared<Sphere>(Point3(4, 1, 0), 1.0, material3));
+
+	return world;
+}
+
 Color ray_color(const Ray& r, const Mesh& world, unsigned int depth)
 {
+	if (depth <= 0)
+		return Color{ 0,0,0 };
 	RayHit hitrec;
 	if (world.hit(r, 0.0001, infinity, hitrec))
 	{
@@ -54,23 +104,22 @@ int main()
 	Timer timer{ "main.cpp" };
 	
 	const double aspect_ratio = 16.0f/9.0f;
-	unsigned int const image_height{ 384 / 16 * 9 }; //384/16*9
+	unsigned int const image_height{ 1080}; //384/16*9
 	unsigned int const image_width{ static_cast<int>(image_height * aspect_ratio)};
 	unsigned int const image_channels {3};
 	unsigned char* const image = new unsigned char[image_height * image_width * image_channels];
 	
 	unsigned int const samples_per_pixel = 10;
 	unsigned int const max_depth = 15;
-	
-	Camera cam;
 
-	MeshList world;
+	Point3 lookfrom(13, 2, 2);
+	Point3 lookat(0, 0, -1);
+	Vector3 vup(0, 1, 0);
+	double dist_to_focus = 10.0;
+	double aperture = 0.1;	
+	Camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
-	world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5, std::make_shared<Lambertian>(Color(.1, .2, .5))));
-	world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100, std::make_shared<Lambertian>(Color(.8, .8, 0.))));
-	world.add(std::make_shared<Sphere>(Point3(1, 0, -1), 0.5, std::make_shared<Metal>(Color(.8, .6, .2), 0.3)));
-	world.add(std::make_shared<Sphere>(Point3(-1, 0, -1), 0.5, std::make_shared<Dielectric>(1.5)));
-	world.add(std::make_shared<Sphere>(Point3(-1, 0, -1), -0.45, std::make_shared<Dielectric>(1.5)));
+	MeshList world = random_scene();
 
 	unsigned char* img = image;
 	for (int j = image_height-1; j >= 0; j--)

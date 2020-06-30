@@ -201,6 +201,16 @@ Vector3 refract(const Vector3& unit_v, const Vector3& n, double etai_over_etat)
 	return r_out_parallel + r_out_perp;
 }
 
+Vector3 random_in_unit_disk()
+{
+	while (true)
+	{
+		Vector3 p = Vector3(random_double(-1, 1), random_double(-1, 1), 0);
+		if (p.length_squared() >= 1) continue;
+		return p;
+	}
+}
+
 using Point3 = Vector3;
 using Color = Vector3;
 
