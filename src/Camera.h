@@ -15,7 +15,9 @@ public:
 		double vfov,
 		double aspect_ratio,
 		double aperture,
-		double focus_dist
+		double focus_dist,
+		double t0 = 0,
+		double t1 = 0
 	)
 	{
 		double theta = deg_to_rad(vfov);
@@ -33,6 +35,8 @@ public:
 		lower_left_corner = origin - horizontal / 2 - vertical / 2 - focus_dist*w;
 
 		lens_radius = aperture / 2;
+		time0 = t0;
+		time1 = t1;
 	}
 
 	Ray get_ray(double s, double t) const
@@ -40,7 +44,7 @@ public:
 		Vector3 rd = lens_radius * random_in_unit_disk();
 		Vector3 offset = u * rd.x() + v * rd.y();
 
-		return Ray{ origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset };
+		return Ray{ origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset, random_double(time0, time1) };
 		//notice offset added to origin and SUBTRACTED form target, this pivots the now defocused ray at F (imaging plane is at C a.k.a 2F a.k.a point of sharp imaging)
 
 	}
@@ -52,6 +56,7 @@ private:
 	Vector3 vertical;
 	Vector3 u, v, w;
 	double lens_radius;
+	double time0, time1; // cam "shutter" open/close times
 };
 
 

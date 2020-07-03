@@ -13,7 +13,7 @@
 struct Timer
 {
 	Timer(const char* l)
-		:label{l}
+		:label(l)
 	{
 		start = std::chrono::high_resolution_clock::now();
 	}

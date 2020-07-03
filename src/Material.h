@@ -22,7 +22,7 @@ public:
 	virtual bool scatter(const Ray& r_in, const RayHit& hitrec, Color& attenuation, Ray& scattered) const override
 	{
 		Vector3 scatter_direction = hitrec.normal + random_unit_vector();
-		scattered = Ray{ hitrec.p, scatter_direction };
+		scattered = Ray{ hitrec.p, scatter_direction, r_in.time() };
 		attenuation = albedo;
 		return true;
 	}

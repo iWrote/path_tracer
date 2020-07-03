@@ -35,6 +35,7 @@ inline double clamp(double x, double min, double max) { return x < min ? min : x
 #include "Vector3.h"
 #include "MeshList.h"
 #include "Sphere.h"
+#include "MovingSphere.h"
 #include "Color.h"
 #include "Camera.h"
 #include "Material.h"
