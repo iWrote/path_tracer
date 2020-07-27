@@ -39,7 +39,7 @@ public:
 		time1 = t1;
 	}
 
-	Ray get_ray(double s, double t) const
+	Ray get_ray(double s, double t) const 
 	{
 		Vector3 rd = lens_radius * random_in_unit_disk();
 		Vector3 offset = u * rd.x() + v * rd.y();

@@ -1,6 +1,10 @@
 #include <iostream>
+
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "headerLibs\stb_image_write.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "headerLibs\stb_image.h"
 
 #include "SimpleRaiiTimer.h"
 
@@ -57,27 +61,28 @@ MeshList random_scene() {
 	return world;
 }
 
-Color ray_color(const Ray& r, const Mesh& world, unsigned int depth)
+Color ray_color(const Ray& r, const Mesh& world, const EnvMap& envmap, unsigned int depth)
 {
 	if (depth <= 0)
 		return Color{ 0,0,0 };
 	RayHit hitrec;
-	if (world.hit(r, 0.0001, infinity, hitrec))
+	if (world.hit(r, 0.0001, infinity, hitrec)) //if we hit something
 	{
 		Ray scattered;
 		Color attenuation;
 
 		if (hitrec.mat_ptr->scatter(r, hitrec, attenuation, scattered))
 		{
-			return attenuation * ray_color(scattered, world, depth - 1); //depth = bounce counting
+			return attenuation * ray_color(scattered, world, envmap, depth - 1); //depth = bounce counting
 		}
 
 		return Color(0, 0, 0); //no light is gathered if surface doesn't scatter the ray
 	}
 	
 	Vector3 unit_direction = unit_vector(r.direction());
-	double t = 0.5 * (unit_direction.y() + 1);
-	return (1 - t) * Color(1, 1, 1) + t * Color(0.5, 0.7, 1);
+	//double t = 0.5 * (unit_direction.y() + 1);
+	//return (1 - t) * Color(1, 1, 1) + t * Color(0.5, 0.7, 1);
+	return envmap.get_color(unit_direction);
 }
 
 int main()
@@ -89,20 +94,31 @@ int main()
 	unsigned int const image_height{ 200}; //384/16*9
 	unsigned int const image_width{ static_cast<int>(image_height * aspect_ratio)};
 	unsigned int const image_channels {3};
-	unsigned char* const image = new unsigned char[image_height * image_width * image_channels];
+	unsigned char* const image = new unsigned char[image_height * image_width * image_channels]; //pointer fixed at img "start"
 	
-	unsigned int const samples_per_pixel = 20;
-	unsigned int const max_depth = 1;
+	int envmap_width = 4000; 
+	int envmap_height = 2000;
+	int envmap_channels = 3;
+	unsigned char* envmap_image = stbi_load("env_hdri.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
 
-	Point3 lookfrom(0,0,4);
-	Point3 lookat(0, 0, -1);
+
+
+
+	unsigned int const samples_per_pixel = 20;
+	unsigned int const max_depth = 4;
+
+	Point3 lookfrom(0,2,4);
+	Point3 lookat(1, 1, -1);
 	Vector3 vup(0, 1, 0);
 	double dist_to_focus = 10.0;
 	double aperture = 0;	
 	Camera cam(lookfrom, lookat, vup, 45, aspect_ratio, aperture, dist_to_focus, 0, 1);
+	
+	EnvMap envmap{ envmap_width, envmap_height, envmap_channels, envmap_image, vup };
+
 
 	MeshList world;
-	world.add(std::make_shared<MovingSphere>(Point3(0, 0, -1), Point3(0, .5, -1), 0, 1, 1, std::make_shared<Lambertian>(Color(0, 1, 0))));
+	//world.add(std::make_shared<MovingSphere>(Point3(0, 0, -1), Point3(0, .5, -1), 0, 1, 1, std::make_shared<Lambertian>(Color(0, 1, 0))));
 
 	unsigned char* img = image;
 	for (int j = image_height-1; j >= 0; j--)
@@ -114,7 +130,7 @@ int main()
 			{
 				double u = (i + random_double()) / (image_width - 1);
 				double v = (j + random_double()) / (image_height - 1);
-				pixel_color += ray_color(cam.get_ray(u, v), world, max_depth);
+				pixel_color += ray_color(cam.get_ray(u, v), world, envmap, max_depth);
 			}	
 			
 			write_rgb_color(img, pixel_color, samples_per_pixel);

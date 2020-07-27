@@ -39,6 +39,7 @@ inline double clamp(double x, double min, double max) { return x < min ? min : x
 #include "Color.h"
 #include "Camera.h"
 #include "Material.h"
+#include "EnvMap.h"
 
 
 

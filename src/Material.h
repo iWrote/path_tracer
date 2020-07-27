@@ -89,7 +89,7 @@ public:
 		//angle dependent chance of reflection (fresnel effect)
 		double reflect_prob = schlick(cos_theta, etai_over_etat);
 
-		if (etai_over_etat * sin_theta > 1.0 || random_double() < reflect_prob)
+		if (etai_over_etat * sin_theta > 1.0 || random_double() < reflect_prob) //REFLECTING
 		{
 			Vector3 reflected = reflect(unit_direction, hitrec.normal);
 			scattered = Ray(hitrec.p, reflected);
