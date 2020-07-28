@@ -7,5 +7,5 @@
  + .png/.jpg/etc. support using [stb_image](https://github.com/nothings/stb/blob/master/stb_image.h)
  + Image-based-lighting (environment maps!)
  
-will try ray marching with this now maybe 
+will try ray marching with this now maybe ("spherical displacement maps/functions?")
 
