@@ -45,7 +45,8 @@ public:
 		Vector3 offset = u * rd.x() + v * rd.y();
 
 		return Ray{ origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset, random_double(time0, time1) };
-		//notice offset added to origin and SUBTRACTED form target, this pivots the now defocused ray at F (imaging plane is at C a.k.a 2F a.k.a point of sharp imaging)
+		//notice offset added to origin and SUBTRACTED form target (imaging plane is at C a.k.a 2F a.k.a point of sharp imaging, no matter what the aperture is) 
+		//and yep, that *plane of sharp imaging is "focus-dist" away from "origin"
 
 	}
 

@@ -82,6 +82,8 @@ Color ray_color(const Ray& r, const Mesh& world, const EnvMap& envmap, unsigned 
 	Vector3 unit_direction = unit_vector(r.direction());
 	//double t = 0.5 * (unit_direction.y() + 1);
 	//return (1 - t) * Color(1, 1, 1) + t * Color(0.5, 0.7, 1);
+
+	
 	return envmap.get_color(unit_direction);
 }
 
@@ -90,7 +92,7 @@ int main()
 
 	Timer timer{ "main.cpp" };
 	
-	const double aspect_ratio = 16.0f/9.0f;
+	const double aspect_ratio = 1; //16.0f/9.0f;
 	unsigned int const image_height{ 200}; //384/16*9
 	unsigned int const image_width{ static_cast<int>(image_height * aspect_ratio)};
 	unsigned int const image_channels {3};
@@ -99,7 +101,7 @@ int main()
 	int envmap_width = 4000; 
 	int envmap_height = 2000;
 	int envmap_channels = 3;
-	unsigned char* envmap_image = stbi_load("env_hdri.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
+	unsigned char* envmap_image = stbi_load("assets/skytexture_debug.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
 
 
 
@@ -107,12 +109,13 @@ int main()
 	unsigned int const samples_per_pixel = 20;
 	unsigned int const max_depth = 4;
 
-	Point3 lookfrom(0,2,4);
-	Point3 lookat(1, 1, -1);
+	Point3 lookfrom(0,0,0);
+	Point3 lookat(0,0,1);
 	Vector3 vup(0, 1, 0);
-	double dist_to_focus = 10.0;
-	double aperture = 0;	
-	Camera cam(lookfrom, lookat, vup, 45, aspect_ratio, aperture, dist_to_focus, 0, 1);
+	double dist_to_focus = 1.0;
+	double aperture = 0;
+	double vfov = 45;
+	Camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0, 1);
 	
 	EnvMap envmap{ envmap_width, envmap_height, envmap_channels, envmap_image, vup };
 
