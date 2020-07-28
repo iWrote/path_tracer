@@ -92,8 +92,8 @@ int main()
 
 	Timer timer{ "main.cpp" };
 	
-	const double aspect_ratio = 1; //16.0f/9.0f;
-	unsigned int const image_height{ 200}; //384/16*9
+	const double aspect_ratio = 16.0f/9.0f;
+	unsigned int const image_height{ 1080}; //384/16*9
 	unsigned int const image_width{ static_cast<int>(image_height * aspect_ratio)};
 	unsigned int const image_channels {3};
 	unsigned char* const image = new unsigned char[image_height * image_width * image_channels]; //pointer fixed at img "start"
@@ -101,16 +101,16 @@ int main()
 	int envmap_width = 4000; 
 	int envmap_height = 2000;
 	int envmap_channels = 3;
-	unsigned char* envmap_image = stbi_load("assets/skytexture_debug.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
+	unsigned char* envmap_image = stbi_load("assets/skytexture.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
 
 
 
 
-	unsigned int const samples_per_pixel = 20;
-	unsigned int const max_depth = 4;
+	unsigned int const samples_per_pixel = 200;
+	unsigned int const max_depth = 50;
 
-	Point3 lookfrom(0,0,0);
-	Point3 lookat(0,0,1);
+	Point3 lookfrom(0,1,4);
+	Point3 lookat(3,3,-1);
 	Vector3 vup(0, 1, 0);
 	double dist_to_focus = 1.0;
 	double aperture = 0;
@@ -120,7 +120,7 @@ int main()
 	EnvMap envmap{ envmap_width, envmap_height, envmap_channels, envmap_image, vup };
 
 
-	MeshList world;
+	MeshList world = random_scene();
 	//world.add(std::make_shared<MovingSphere>(Point3(0, 0, -1), Point3(0, .5, -1), 0, 1, 1, std::make_shared<Lambertian>(Color(0, 1, 0))));
 
 	unsigned char* img = image;
