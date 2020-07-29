@@ -1,5 +1,5 @@
 # path_tracer
- Raytracing project. Trying to learn some C++ and CG in tandem.  
+ Raytracing project. To learn some C++ and CG in tandem.  
  
  ![render](https://raw.githubusercontent.com/iWrote/path_tracer/master/renders/skysph_demo.png?token=AEL4BRYYJ7R6CGRBHVORC6K7FGAFM)
 <img src="https://raw.githubusercontent.com/iWrote/path_tracer/master/renders/metaballs_demo.gif?token=AEL4BR3AJ3KIANOCVNBHX427FLVXO" alt="drawing" width="200"/>  
