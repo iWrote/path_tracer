@@ -9,6 +9,17 @@
 
 //COULD INHERIT FROM MESHLIST AND ASSERT THAT ALL MESHES ARE SPHERES, repeating some code for now because Implicit Surfaces are different 
 
+
+double GaussianFalloff(double d_squared, double r)  //Blobby, expensive, simple. Also called blinn falloff
+{
+	return exp(-r * d_squared);
+}
+
+double WyvilFalloff(double d_squared, double r)
+{
+	return pow((1 - d_squared / (r * r)), 3);
+}
+
 class MetaballList : public Mesh
 {
 public:
@@ -39,12 +50,7 @@ public:
 
 	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const;
 
-
-	double GaussianFalloff(double d_squared, double r) const  //Blobby, expensive, simple. Also called blinn falloff
-	{
-		return exp(-r * d_squared);
-	}
-
+	
 	double get_potential_at(const Point3& p) const
 	{
 		double potential = 0;
@@ -53,6 +59,7 @@ public:
 		{
 			d_squared = (ball->center - p).length_squared();
 			potential += GaussianFalloff(d_squared, ball->radius);
+
 		}
 
 		return potential;
@@ -60,7 +67,7 @@ public:
 
 	Vector3 get_gradient_at(const Point3& p) const
 	{
-		double eps = 0.01;
+		double eps = 0.001;
 
 		double gradFx = get_potential_at(p + xcap() * eps) - get_potential_at(p);
 		double gradFy = get_potential_at(p + ycap() * eps) - get_potential_at(p);
@@ -79,9 +86,8 @@ protected:
 
 bool MetaballList::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
 {
-	int max_steps = 256;
 	float step = 0.01;
-	double eps = 0.05;
+	double eps = 0.01;
 	double potential = 0;
 	
 	for (float t = tmin; t < tmax; t+=step)
@@ -95,6 +101,7 @@ bool MetaballList::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) c
 			hitrec.t = t;
 			hitrec.p = r.at(t);
 			hitrec.set_face_normal(r, unit_vector(get_gradient_at(r.at(t))));
+			
 			hitrec.mat_ptr = matlist_ptr;
 			return true;
 		}
@@ -104,5 +111,7 @@ bool MetaballList::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) c
 
 
 }
+
+
 
 #endif // !#MetaballList_H
