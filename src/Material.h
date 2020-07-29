@@ -106,7 +106,20 @@ public:
 	double ref_idx;
 };
 
+class MetaballListMaterial : public Material
+{
+public:
+	virtual bool scatter(const Ray& r_in, const RayHit& hitrec, Color& attenuation, Ray& scattered) const
+	{
+		Vector3 scatter_direction = hitrec.normal + random_unit_vector();
+		scattered = Ray{ hitrec.p, scatter_direction, r_in.time() };
+		attenuation = {0.5,0.5,0.5};
+		return true;
+	}
 
+public:
+	//std::unique_ptr<std::vector<std::shared_ptr<Sphere>>> balls_ptr;
+};
 
 
 #endif // !MATERIAL_H

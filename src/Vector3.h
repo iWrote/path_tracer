@@ -211,6 +211,10 @@ Vector3 random_in_unit_disk()
 	}
 }
 
+Vector3 xcap() { return { 1,0,0 }; }
+Vector3 ycap() { return { 0,1,0 }; }
+Vector3 zcap() { return { 0,0,1 }; }
+
 using Point3 = Vector3;
 using Color = Vector3;
 

@@ -40,6 +40,7 @@ inline double clamp(double x, double min, double max) { return x < min ? min : x
 #include "Camera.h"
 #include "Material.h"
 #include "EnvMap.h"
+#include "MetaballList.h"
 
 
 

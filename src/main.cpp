@@ -44,6 +44,7 @@ MeshList random_scene() {
 					// glass
 					sphere_material = std::make_shared<Dielectric>(1.5);
 					world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+				
 				}
 			}
 		}
@@ -66,7 +67,7 @@ Color ray_color(const Ray& r, const Mesh& world, const EnvMap& envmap, unsigned 
 	if (depth <= 0)
 		return Color{ 0,0,0 };
 	RayHit hitrec;
-	if (world.hit(r, 0.0001, infinity, hitrec)) //if we hit something
+	if (world.hit(r, 0.0001, 10, hitrec)) //if we hit something
 	{
 		Ray scattered;
 		Color attenuation;
@@ -79,12 +80,12 @@ Color ray_color(const Ray& r, const Mesh& world, const EnvMap& envmap, unsigned 
 		return Color(0, 0, 0); //no light is gathered if surface doesn't scatter the ray
 	}
 	
-	Vector3 unit_direction = unit_vector(r.direction());
-	//double t = 0.5 * (unit_direction.y() + 1);
-	//return (1 - t) * Color(1, 1, 1) + t * Color(0.5, 0.7, 1);
-
-	
+	Vector3 unit_direction = unit_vector(r.direction());	
 	return envmap.get_color(unit_direction);
+
+	//background sky colour
+	//double t = 0.5 * (unit_direction.y() + 1);
+	//return (1 - t) * Color(1, 1, 1) + t * Color(0.5, 0.7, 1);	
 }
 
 int main()
@@ -92,8 +93,8 @@ int main()
 
 	Timer timer{ "main.cpp" };
 	
-	const double aspect_ratio = 16.0f/9.0f;
-	unsigned int const image_height{ 1080}; //384/16*9
+	const double aspect_ratio = 1; //16.0f/9.0f;
+	unsigned int const image_height{ 100}; //384/16*9
 	unsigned int const image_width{ static_cast<int>(image_height * aspect_ratio)};
 	unsigned int const image_channels {3};
 	unsigned char* const image = new unsigned char[image_height * image_width * image_channels]; //pointer fixed at img "start"
@@ -101,26 +102,33 @@ int main()
 	int envmap_width = 4000; 
 	int envmap_height = 2000;
 	int envmap_channels = 3;
-	unsigned char* envmap_image = stbi_load("assets/skytexture.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
+	unsigned char* envmap_image = stbi_load("assets/skytexture_debug.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
 
 
 
 
-	unsigned int const samples_per_pixel = 200;
-	unsigned int const max_depth = 50;
+	unsigned int const samples_per_pixel = 20;
+	unsigned int const max_depth = 5;
 
-	Point3 lookfrom(0,1,4);
-	Point3 lookat(3,3,-1);
+	Point3 lookfrom(0,0,0);
+	Point3 lookat(0,0,1);
 	Vector3 vup(0, 1, 0);
 	double dist_to_focus = 1.0;
 	double aperture = 0;
 	double vfov = 45;
-	Camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0, 1);
 	
+	Camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0, 1);	
 	EnvMap envmap{ envmap_width, envmap_height, envmap_channels, envmap_image, vup };
+	MeshList world;
 
 
-	MeshList world = random_scene();
+
+	std::shared_ptr<MetaballListMaterial> metaballmat= std::make_shared<MetaballListMaterial>();
+	std::shared_ptr<MetaballList> metaballs_ptr = std::make_shared<MetaballList>(.9, metaballmat);
+	metaballs_ptr->add(std::make_shared<Sphere>(Point3(0,.9,3), 1, metaballmat));
+	metaballs_ptr->add(std::make_shared<Sphere>(Point3(0, -.9, 3), 1, metaballmat));
+
+	world.add(metaballs_ptr);
 	//world.add(std::make_shared<MovingSphere>(Point3(0, 0, -1), Point3(0, .5, -1), 0, 1, 1, std::make_shared<Lambertian>(Color(0, 1, 0))));
 
 	unsigned char* img = image;

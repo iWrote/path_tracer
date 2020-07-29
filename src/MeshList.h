@@ -34,7 +34,7 @@ public:
 
 	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const;
 
-public:
+protected:
 	std::vector<std::shared_ptr<Mesh>> meshes;
 };
 
