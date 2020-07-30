@@ -109,6 +109,8 @@ public:
 class MetaballListMaterial : public Material
 {
 public:
+
+	//temporary, no material blending
 	virtual bool scatter(const Ray& r_in, const RayHit& hitrec, Color& attenuation, Ray& scattered) const
 	{
 		/*
@@ -156,7 +158,7 @@ public:
 	}
 
 public:
-	//std::unique_ptr<std::vector<std::shared_ptr<Sphere>>> balls_ptr;
+	//std::unique_ptr<std::vector<std::shared_ptr<Sphere>>> balls_ptr; //for material blending among metaballs
 };
 
 

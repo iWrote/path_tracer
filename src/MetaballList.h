@@ -15,7 +15,7 @@ double GaussianFalloff(double d_squared, double r)  //Blobby, expensive, simple.
 	return exp(-r * d_squared);
 }
 
-double WyvilFalloff(double d_squared, double r)
+double WyvilFalloff(double d_squared, double r) //slower than gaussian? weird
 {
 	return pow((1 - d_squared / (r * r)), 3);
 }
@@ -96,6 +96,9 @@ bool MetaballList::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) c
 		potential = get_potential_at(r.at(t));
 		//std::cout << "raymarching " << t << "/" << tmax << std::endl;
 		//std::cout << potential << std::endl;
+
+
+		//metaballs metamorphing
 		if (abs(potential - level) < eps)
 		{
 			hitrec.t = t;

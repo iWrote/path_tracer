@@ -19,6 +19,7 @@ public:
 
 	}
 
+	//takes directiontion to long-lat to UV texture coord assuming equirectangular projection
 	Color get_color(const Vector3& ud) const //optimise? eats up many cycles
 	{
 		
@@ -39,22 +40,8 @@ public:
 		int v = (int)(clamp(latitude / pi, 0, 0.99) * height);
 		
 		//std::cout << longitude << ", " << u << " | ";
-		//std::cout << latitude << ", " << v << std::endl;
-
+		//std::cout << latitude << ", " << v << std::endl;		
 		
-		
-		if (u >= width || v >= height)
-		{
-			std::cout << ud << std::endl;
-			std::cout << longitude << std::endl;
-
-			std::cout << latitude << std::endl;
-
-			std::cout << u << "  " << width << std::endl;
-
-			std::cout << v << "  " << height << std::endl;		
-
-		}
 			
 
 		unsigned char const* pixelptr = image + (v * width * channels) + (u * channels);
@@ -70,7 +57,7 @@ private:
 	int const width;
 	int const channels;
 	unsigned char const* const image;
-	Vector3 vup; //to orient the skyshpere
+	Vector3 vup; //to orient the skyshpere, NOT USING RN, ASSUMES vup = y+
 
 	
 
