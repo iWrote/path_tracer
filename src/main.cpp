@@ -1,4 +1,5 @@
 #include <iostream>
+#include <omp.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "headerLibs\stb_image_write.h"
@@ -142,11 +143,11 @@ int main()
 	
 	//world.add(std::make_shared<MovingSphere>(Point3(0, 0, -1), Point3(0, .5, -1), 0, 1, 1, std::make_shared<Lambertian>(Color(0, 1, 0))));
 
-	unsigned char* img = image;
 
-	for (int j = image_height-1; j >= 0; j--)
+	#pragma omp parallel for
+	for (int j = image_height - 1; j >= 0; j--)
 	{
-
+		
 		for (int i = 0; i < image_width; i++)
 		{
 			Color pixel_color{ 0,0,0 };
@@ -156,12 +157,13 @@ int main()
 				double u = (i + random_double()) / (image_width - 1);
 				double v = (j + random_double()) / (image_height - 1);
 				pixel_color += ray_color(cam.get_ray(u, v), world, envmap, max_depth);
-			}	
-			
-			write_rgb_color(img, pixel_color, samples_per_pixel);
+			}
+
+			write_rgb_color(i, (image_height - 1)-j, image, pixel_color, samples_per_pixel, image_width);
 		}
-		std::cout << "\rScanlines remaining: " << j - 1 << ' ' << std::flush;
+		//std::cout << "\rScanlines remaining: " << j - 1 << ' ' << std::flush;
 	}
+	
 	std::cout << "\nDone.\n";
 	stbi_write_png("output.png", image_width, image_height, image_channels, image, 0);
 	delete[] image;
