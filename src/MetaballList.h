@@ -48,8 +48,8 @@ public:
 		balls.push_back(ball);
 	}
 
-	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const;
-
+	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const override;
+	virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
 	
 	double get_potential_at(const Point3& p) const
 	{
@@ -86,11 +86,11 @@ protected:
 
 bool MetaballList::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
 {
-	float step = 0.01;
+	double step = 0.01;
 	double eps = 0.01;
 	double potential = 0;
 	
-	for (float t = tmin; t < tmax; t+=step)
+	for (double t = tmin; t < tmax; t+=step) //hello, rounding err addin up
 	{
 
 		potential = get_potential_at(r.at(t));
@@ -113,6 +113,23 @@ bool MetaballList::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) c
 	return false;
 
 
+}
+
+bool MetaballList::bounding_box(double time0, double time1, AABB& output_box) const
+{
+	if (balls.empty()) 
+		return false;
+
+	AABB temp_box;
+	bool first_box = true;
+
+	for (const auto& ball : balls)
+	{
+		output_box = first_box ? temp_box : surrounding_box(output_box, temp_box);
+		first_box = false;
+	}
+
+	return true;
 }
 
 

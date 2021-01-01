@@ -4,6 +4,7 @@
 
 #include "path_tracer_utils.h"
 
+
 class Sphere : public Mesh
 {
 public:
@@ -14,7 +15,8 @@ public:
 		:center(cen), radius(r), mat_ptr(m)
 	{}
 
-	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const;
+	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const override;
+	virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
 
 public:
 	Point3 center;
@@ -57,5 +59,14 @@ bool Sphere::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
 	return false;
 		
 }
+
+inline bool Sphere::bounding_box(double time0, double time1, AABB& output_box) const 
+{
+	output_box = AABB(center - Vector3(radius, radius, radius), center + Vector3(radius, radius, radius));
+	return true;
+}
+
+
+
 
 #endif // !SPHERE_H

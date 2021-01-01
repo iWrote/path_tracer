@@ -7,13 +7,12 @@
 #include "headerLibs\stb_image.h"
 
 #include "SimpleRaiiTimer.h"
-
 #include "path_tracer_utils.h"
 
 
 
 
-MeshList random_scene() {
+MeshList random_scene_1() {
 	MeshList world;
 
 	auto ground_material = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
@@ -117,14 +116,20 @@ int main()
 	Vector3 vup(0, 1, 0);
 	double dist_to_focus = 1.0;
 	double aperture = 0;
-	double vfov = 30;
+	double vfov = 90;
 	
 	Camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0, 1);	
 	EnvMap envmap{ envmap_width, envmap_height, envmap_channels, envmap_image, vup };
 	MeshList world;
 
+	MeshList balls;
+	for (int i = 0; i < 6; i++)
+	{
+		balls.add(std::make_shared<Sphere>(Point3(0, i, 4), 1, std::make_shared<Dielectric>(1.5)));
+	}
+	
 
-	world.add(std::make_shared<Sphere>(Point3(0, 0, 4), 1, std::make_shared<Dielectric>(1.5)));
+	world.add(std::make_shared<BVH_Node>(balls, 0, 1));
 
 
 	/*
@@ -155,7 +160,7 @@ int main()
 			
 			write_rgb_color(img, pixel_color, samples_per_pixel);
 		}
-		std::cout << "\rScanlines remaining: " << j-1 << ' ' << std::flush;
+		std::cout << "\rScanlines remaining: " << j - 1 << ' ' << std::flush;
 	}
 	std::cout << "\nDone.\n";
 	stbi_write_png("output.png", image_width, image_height, image_channels, image, 0);

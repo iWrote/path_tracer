@@ -32,9 +32,11 @@ public:
 		meshes.push_back(mesh);
 	}
 
-	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const;
+	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const override;
+	virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
 
-protected:
+
+public:
 	std::vector<std::shared_ptr<Mesh>> meshes;
 };
 
@@ -60,5 +62,26 @@ bool MeshList::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
 
 
 }
+
+bool MeshList::bounding_box(double time0, double time1, AABB& output_box) const
+{
+	if (meshes.empty()) 
+		return false;
+
+	AABB temp_box;
+	bool first_box = true;
+
+	for (const auto& mesh : meshes)
+	{
+		//so don't mix mesh lists of stuff with AABBs and stuff without AABBs ryt
+		if (!mesh->bounding_box(time0, time1, temp_box))
+			return false;
+
+		output_box = first_box ? temp_box : surrounding_box(output_box, temp_box);
+		first_box = false;
+	}
+	return true;
+}
+
 
 #endif // !#MESHLIST_H

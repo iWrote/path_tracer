@@ -14,7 +14,9 @@ public:
 		: center0(cen0), center1(cen1), time0(t0), time1(t1), radius(r), mat_ptr(m)
 	{}
 
-	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const;
+	virtual bool hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const override;
+	virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
+
 
 	Point3 center(double time) const;
 
@@ -32,7 +34,7 @@ Point3 MovingSphere::center(double time) const
 	return center0 + ((time - time0) / (time1 - time0)) * (center1 - center0);
 }
 
-bool MovingSphere::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const
+bool MovingSphere::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) const 
 {
 	Vector3 oc = r.origin() - center(r.time());
 	double a = r.direction().length_squared();
@@ -69,6 +71,18 @@ bool MovingSphere::hit(const Ray& r, double tmin, double tmax, RayHit& hitrec) c
 }
 
 
+bool MovingSphere::bounding_box(double _time0, double _time1, AABB& output_box) const 
+{
+	AABB box0(
+		center(_time0) - Vector3(radius, radius, radius),
+		center(_time0) + Vector3(radius, radius, radius));
+	AABB box1(			 
+		center(_time1) - Vector3(radius, radius, radius),
+		center(_time1) + Vector3(radius, radius, radius));
+	output_box = surrounding_box(box0, box1);
+	return true;
+	return true;
+}
 
 
 

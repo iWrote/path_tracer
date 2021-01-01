@@ -29,11 +29,11 @@ public:
 		*/
 
 
-		float longitude = atan2(ud.x(), ud.z()); //[-pi, pi]; 0 is z+
+		double longitude = atan2(ud.x(), ud.z()); //[-pi, pi]; 0 is z+
 		
 		
-		float nodalAngle = atan((std::sqrt(ud.x() * ud.x() + ud.z() * ud.z()) / ud.y()));
-		float latitude = nodalAngle > 0 ? nodalAngle : nodalAngle + pi; 
+		double nodalAngle = atan((std::sqrt(ud.x() * ud.x() + ud.z() * ud.z()) / ud.y()));
+		double latitude = nodalAngle > 0 ? nodalAngle : nodalAngle + pi; 
 		
 		//sky_sph texture coord
 		int u = (int)(clamp ( longitude / (2*pi), -0.499, 0.499) * width) + width/2;
