@@ -104,7 +104,7 @@ int main()
 	int envmap_width = 1024; 
 	int envmap_height = 512;
 	int envmap_channels = 3;
-	unsigned char* envmap_image = stbi_load("assets/skytexture.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
+	unsigned char* envmap_image = stbi_load("assets/skytexture_debug.jpg", &envmap_width, &envmap_height, &envmap_channels, 3);
 	//float* envmap_hdr_image = stbi__hdr_load(stbi_context ptr needed here, &envmap_width, &envmap_height, &envmap_channels, 3);
 
 
@@ -117,34 +117,27 @@ int main()
 	Vector3 vup(0, 1, 0);
 	double dist_to_focus = 1.0;
 	double aperture = 0;
-	double vfov = 90;
+	double vfov = 45;
 	
 	Camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0, 1);	
 	EnvMap envmap{ envmap_width, envmap_height, envmap_channels, envmap_image, vup };
+	
 	MeshList world;
 
-	MeshList balls;
-	for (int i = 0; i < 6; i++)
-	{
-		balls.add(std::make_shared<Sphere>(Point3(0, i, 4), 1, std::make_shared<Dielectric>(1.5)));
-	}
 	
-
-	world.add(std::make_shared<BVH_Node>(balls, 0, 1));
-
-
-	/*
 	std::shared_ptr<MetaballListMaterial> metaballmat= std::make_shared<MetaballListMaterial>();
-	std::shared_ptr<MetaballList> metaballs_ptr = std::make_shared<MetaballList>(.9, metaballmat);
-	metaballs_ptr->add(std::make_shared<Sphere>(Point3(3,0,3), 1, metaballmat));
-	metaballs_ptr->add(std::make_shared<Sphere>(Point3(3, 0, 3), 1, metaballmat));
-	*/
+	std::shared_ptr<MetaballList> metaballs_ptr = std::make_shared<MetaballList>(.8, metaballmat);
+	//metaballs_ptr->add(std::make_shared<Sphere>(Point3(0,1,3), 1, metaballmat));
+	//metaballs_ptr->add(std::make_shared<Sphere>(Point3(0, 0, 3), 1, metaballmat));
+	metaballs_ptr->add(std::make_shared<Sphere>(Point3(0, 0, 10), 1, metaballmat));
+	world.add(metaballs_ptr);
+	
 
 	
 	//world.add(std::make_shared<MovingSphere>(Point3(0, 0, -1), Point3(0, .5, -1), 0, 1, 1, std::make_shared<Lambertian>(Color(0, 1, 0))));
 
-
-	#pragma omp parallel for
+	//omp_set_num_threads(2); //https://stackoverflow.com/questions/4817789/hyper-threading-made-my-renderer-10-times-slower
+	//#pragma omp parallel for
 	for (int j = image_height - 1; j >= 0; j--)
 	{
 		
